@@ -1,0 +1,114 @@
+{
+  "performers": [
+    {
+      "id": "crystal_star",
+      "name": "Crystal Star",
+      "baseline_tips": 800,
+      "target_tips": 2000,
+      "cut_percent": 10,
+      "notes": "Streams late night EST. Focuses on gaming and interactive chat. Wants to increase viewer engagement through customized tip goals.",
+      "sessions": [
+        {
+          "id": "sess_1",
+          "date": "2026-05-28",
+          "duration_hours": 3.5,
+          "total_tips": 1850,
+          "notes": "Implemented the new 'Dice Roll' tip game. Big increase in minor tips (20-50 tokens).",
+          "commission_paid": true
+        },
+        {
+          "id": "sess_2",
+          "date": "2026-05-30",
+          "duration_hours": 4,
+          "total_tips": 2200,
+          "notes": "Used the outfit spinner goal. Reached the target easily.",
+          "commission_paid": false
+        }
+      ]
+    },
+    {
+      "id": "gamer_queen",
+      "name": "Gamer Queen",
+      "baseline_tips": 500,
+      "target_tips": 1200,
+      "cut_percent": 10,
+      "notes": "Streams cosplay gaming. Needs games that integrate with gameplay milestones.",
+      "sessions": [
+        {
+          "id": "sess_3",
+          "date": "2026-05-29",
+          "duration_hours": 3,
+          "total_tips": 1100,
+          "notes": "Interactive choose-my-weapon tip menu was a hit.",
+          "commission_paid": false
+        }
+      ]
+    }
+  ],
+  "games": [
+    {
+      "id": "game_dice",
+      "title": "Interactive Dice Roll",
+      "description": "Viewer tips a specific amount to trigger a dice roll, each face corresponds to a fun action.",
+      "menu": [
+        {
+          "tokens": 20,
+          "action": "Blow a kiss"
+        },
+        {
+          "tokens": 20,
+          "action": "Wink at the camera"
+        },
+        {
+          "tokens": 20,
+          "action": "Say a custom hello/greet"
+        },
+        {
+          "tokens": 20,
+          "action": "Do a 5-second dance"
+        },
+        {
+          "tokens": 20,
+          "action": "Sing a line of a song"
+        },
+        {
+          "tokens": 20,
+          "action": "Roll again for free!"
+        }
+      ]
+    },
+    {
+      "id": "game_wheel",
+      "title": "Cosplay/Outfit Wheel",
+      "description": "Higher tier tips to spin the outfit wheel or request minor adjustments.",
+      "menu": [
+        {
+          "tokens": 150,
+          "action": "Spin the Cosplay Wheel"
+        },
+        {
+          "tokens": 50,
+          "action": "Change hair style (braids, ponytail, down)"
+        },
+        {
+          "tokens": 100,
+          "action": "Add custom accessory (cat ears, glasses, choker)"
+        },
+        {
+          "tokens": 250,
+          "action": "Let viewer choose next outfit category"
+        }
+      ]
+    }
+  ],
+  "recordings": [
+    {
+      "username": "offline_performer_test_123",
+      "startTime": "2026-05-31T03:25:59.115Z",
+      "endTime": "2026-05-31T03:26:00.605Z",
+      "finalSize": "0 B",
+      "duration": "00:00",
+      "exitCode": 1
+    }
+  ]
+}

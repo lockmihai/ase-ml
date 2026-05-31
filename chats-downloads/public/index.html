@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performer Archiver & Marketing Optimizer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="main-header">
+      <div class="logo-area">
+        <div class="logo-icon"><i data-lucide="activity"></i></div>
+        <div>
+          <h1>ANTIGRAVITY <span class="accent-text">OPTIMIZER</span></h1>
+          <p class="subtitle">Livestream Archiver & Performer Marketing System</p>
+        </div>
+      </div>
+      
+      <!-- System Stats Indicators -->
+      <div class="system-status" id="system-status">
+        <div class="status-indicator" id="ytdlp-status">
+          <span class="dot yellow"></span>
+          <span class="status-label">yt-dlp: checking</span>
+        </div>
+        <div class="status-indicator" id="ffmpeg-status">
+          <span class="dot yellow"></span>
+          <span class="status-label">ffmpeg: checking</span>
+        </div>
+        <div class="status-indicator highlight" id="storage-status">
+          <i data-lucide="hard-drive"></i>
+          <span class="status-label">0 files (0 MB)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="workspace">
+      
+      <!-- Side Navigation -->
+      <aside class="sidebar">
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="recorder">
+            <i data-lucide="video"></i>
+            <span>Stream Recorder</span>
+            <span class="badge" id="active-recordings-badge" style="display: none;">0</span>
+          </button>
+          <button class="nav-item" data-tab="performers">
+            <i data-lucide="users"></i>
+            <span>Performer CRM</span>
+          </button>
+          <button class="nav-item" data-tab="games">
+            <i data-lucide="dices"></i>
+            <span>Tip Games Creator</span>
+          </button>
+          <button class="nav-item" data-tab="suggestions">
+            <i data-lucide="sparkles"></i>
+            <span>Suggestions Hub</span>
+          </button>
+        </nav>
+
+        <!-- Quick Info Box -->
+        <div class="sidebar-footer">
+          <div class="info-card">
+            <h4><i data-lucide="shield-alert"></i> 10% Revenue Model</h4>
+            <p>Help performers increase tip engagement, optimize marketing, and take 10% of their tip earnings increase with zero upfront fee.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Panels -->
+      <main class="content-panel">
+        
+        <!-- ================= RECORDER PANEL ================= -->
+        <section class="tab-content active" id="panel-recorder">
+          <div class="panel-header">
+            <h2>Live Stream Archiver</h2>
+            <p>Connect and record active broadcaster streams directly to local storage.</p>
+          </div>
+
+          <div class="grid-layout cols-2">
+            <!-- Left: Start Recording & Active Log -->
+            <div class="card glass">
+              <div class="card-header">
+                <h3><i data-lucide="plus-circle" class="text-accent"></i> Start Stream Recording</h3>
+              </div>
+              <form id="record-start-form" class="standard-form">
+                <div class="form-group">
+                  <label for="record-username">Performer Username / Chaturbate URL</label>
+                  <div class="input-with-button">
+                    <input type="text" id="record-username" placeholder="e.g. crystal_star" required>
+                    <button type="submit" class="btn btn-primary" id="btn-start-record">
+                      <i data-lucide="play"></i> Record
+                    </button>
+                  </div>
+                  <small class="form-help">Enter the username of an online performer. The system will connect and capture the HLS stream in real-time.</small>
+                </div>
+              </form>
+
+              <!-- Active Recording Status -->
+              <div id="active-recording-states" class="recording-states-container">
+                <!-- Dynamically populated active recording item -->
+              </div>
+            </div>
+
+            <!-- Right: External Browse -->
+            <div class="card glass flex-col">
+              <div class="card-header">
+                <h3><i data-lucide="search" class="text-accent"></i> Live Directories</h3>
+              </div>
+              <div class="browse-integration">
+                <p>Chaturbate prevents third-party framing. Open the directory to find performers currently broadcasting live, copy their username, and record them here.</p>
+                <div class="action-buttons">
+                  <a href="https://chaturbate.com/" target="_blank" class="btn btn-secondary">
+                    <i data-lucide="external-link"></i> Browse Chaturbate
+                  </a>
+                  <a href="https://chaturbate.com/gaming-cams/" target="_blank" class="btn btn-secondary">
+                    <i data-lucide="gamepad-2"></i> Gaming Cams
+                  </a>
+                </div>
+                
+                <div class="quick-credentials">
+                  <h5><i data-lucide="key"></i> Saved Credentials (from .env)</h5>
+                  <div class="credential-box">
+                    <div><strong>Username:</strong> <span id="saved-username">lockmihai</span></div>
+                    <div><strong>Password:</strong> <span id="saved-password">•••••••••••••••••</span></div>
+                  </div>
+                  <small class="text-muted">These credentials are passed to yt-dlp to bypass age verification or download member-only streams.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Downloads List -->
+          <div class="card glass margin-top-lg">
+            <div class="card-header flex-between">
+              <h3><i data-lucide="folder" class="text-accent"></i> Completed Stream Archive</h3>
+              <button class="btn btn-icon-text btn-secondary btn-sm" id="btn-refresh-downloads">
+                <i data-lucide="rotate-cw"></i> Refresh Directory
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="downloads-table">
+                <thead>
+                  <tr>
+                    <th>Performer</th>
+                    <th>Filename</th>
+                    <th>File Size</th>
+                    <th>Date Recorded</th>
+                    <th class="actions-col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="downloads-list">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted">No completed recordings found in downloads directory.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PERFORMERS CRM PANEL ================= -->
+        <section class="tab-content" id="panel-performers">
+          <div class="panel-header flex-between">
+            <div>
+              <h2>Performer CRM & Revenue Share Tracker</h2>
+              <p>Track your clients, their average baseline tips, and calculate your 10% commission on tip increases.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-add-performer-modal">
+              <i data-lucide="user-plus"></i> Add Performer Client
+            </button>
+          </div>
+
+          <!-- Performer CRM Grid -->
+          <div class="performers-container" id="performers-list-grid">
+            <!-- Dynamically generated performer cards -->
+          </div>
+        </section>
+
+        <!-- ================= TIP GAMES CREATOR ================= -->
+        <section class="tab-content" id="panel-games">
+          <div class="panel-header">
+            <h2>Interactive Tip Games Creator</h2>
+            <p>Generate highly engaging interactive games and menus for performers to paste into their bio and chat, boosting tips instantly.</p>
+          </div>
+
+          <div class="grid-layout cols-2">
+            <!-- Left: Game Editor -->
+            <div class="card glass">
+              <div class="card-header">
+                <h3>Customize Your Tip Game</h3>
+              </div>
+              <form id="game-editor-form" class="standard-form">
+                <div class="form-group">
+                  <label for="game-preset-select">Select a Base Game Preset</label>
+                  <select id="game-preset-select" class="form-control">
+                    <option value="">-- Start from Scratch --</option>
+                    <!-- Presets dynamically loaded -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="game-title">Game Title</label>
+                  <input type="text" id="game-title" placeholder="e.g. Roll a Dice & Win" required class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="game-description">Game Rules / Description</label>
+                  <textarea id="game-description" placeholder="e.g. Tip 20 tokens to roll the dice. Each number corresponds to a fun action below!" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex-between margin-bottom-sm">
+                    <label>Game Reward Actions</label>
+                    <button type="button" class="btn btn-sm btn-secondary" id="btn-add-game-row">
+                      <i data-lucide="plus"></i> Add Option
+                    </button>
+                  </div>
+                  <div id="game-options-container" class="options-rows">
+                    <!-- Option rows added dynamically -->
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i data-lucide="sparkles"></i> Generate Game Output
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right: Output Preview & Code Generator -->
+            <div class="card glass flex-col">
+              <div class="card-header flex-between">
+                <h3>Live Preview & Export</h3>
+                <button class="btn btn-secondary btn-sm" id="btn-copy-game-text">
+                  <i data-lucide="copy"></i> Copy Text Format
+                </button>
+              </div>
+              
+              <div class="game-preview-container flex-grow">
+                <div class="game-preview-widget" id="game-html-preview">
+                  <div class="preview-placeholder">
+                    <i data-lucide="eye" size="48"></i>
+                    <p>Customize the options on the left and click "Generate Game Output" to view the interactive widget and copy-pasteable bio menu.</p>
+                  </div>
+                </div>
+                
+                <div class="game-text-export">
+                  <label>Copy-paste Chat / Bio Text version</label>
+                  <textarea id="game-text-output" readonly placeholder="Raw text output for Chaturbate chat commands or bio updates..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SUGGESTIONS HUB PANEL ================= -->
+        <section class="tab-content" id="panel-suggestions">
+          <div class="panel-header">
+            <h2>AI Marketing & Suggestions Generator</h2>
+            <p>Enter the profile style of your performer to generate tailored optimization roadmaps and promotion strategies.</p>
+          </div>
+
+          <div class="grid-layout cols-2">
+            <!-- Left form -->
+            <div class="card glass">
+              <div class="card-header">
+                <h3>Performer Profile Analyzer</h3>
+              </div>
+              <form id="suggestions-generator-form" class="standard-form">
+                <div class="form-group">
+                  <label for="sugg-category">Streaming Category</label>
+                  <select id="sugg-category" class="form-control" required>
+                    <option value="gaming">Gaming & Cosplay</option>
+                    <option value="female">Female Solo / Interactive</option>
+                    <option value="couple">Couples / Roleplay</option>
+                    <option value="other">Chatting & ASMR</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sugg-style">Personality Style / Vibe</label>
+                  <select id="sugg-style" class="form-control" required>
+                    <option value="chatty">Talkative & Conversational</option>
+                    <option value="chill">Chill, Silent & ASMR</option>
+                    <option value="energetic">High-Energy & Wild</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sugg-experience">Performer Experience Level</label>
+                  <select id="sugg-experience" class="form-control" required>
+                    <option value="beginner">Beginner (Under 10k followers)</option>
+                    <option value="intermediate">Established (Has standard base)</option>
+                    <option value="advanced">Veteran (Large fan club & multiple streams)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sugg-target">Top Stream Goal</label>
+                  <input type="text" id="sugg-target" placeholder="e.g. increase fan-club signups, boost tip frequency" class="form-control">
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i data-lucide="zap"></i> Generate Marketing Blueprint
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right results -->
+            <div class="card glass flex-col" id="suggestions-result-card">
+              <div class="card-header">
+                <h3>Tailored Optimization Blueprint</h3>
+              </div>
+              <div class="blueprint-content flex-grow" id="blueprint-output">
+                <div class="preview-placeholder">
+                  <i data-lucide="book-open" size="48"></i>
+                  <p>Submit the profile details on the left to output your tailored stream suggestions, tip optimization checklists, and marketing ideas.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- ================= MODALS & OVERLAYS ================= -->
+  
+  <!-- Add Performer Modal -->
+  <div class="modal-overlay" id="performer-modal">
+    <div class="modal-card glass">
+      <div class="modal-header">
+        <h3><i data-lucide="user-plus"></i> Add Performer Client</h3>
+        <button class="btn-close" id="btn-close-performer-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="performer-form" class="standard-form">
+          <div class="form-group">
+            <label for="perf-id">Chaturbate Username (Unique ID)</label>
+            <input type="text" id="perf-id" required placeholder="e.g. crystal_star" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="perf-name">Display/Stage Name</label>
+            <input type="text" id="perf-name" required placeholder="e.g. Crystal Star" class="form-control">
+          </div>
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="perf-baseline">Baseline Tips (Tokens/Hr)</label>
+              <input type="number" id="perf-baseline" value="500" class="form-control">
+            </div>
+            <div class="form-group col">
+              <label for="perf-target">Target Tips (Tokens/Hr)</label>
+              <input type="number" id="perf-target" value="1500" class="form-control">
+            </div>
+            <div class="form-group col">
+              <label for="perf-cut">Commission Cut (%)</label>
+              <input type="number" id="perf-cut" value="10" min="1" max="100" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="perf-notes">Notes / Observations</label>
+            <textarea id="perf-notes" placeholder="e.g. Wants help setting up her OBS overlay. Commits to 4-hour sessions." class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-performer">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Client Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log Session Modal -->
+  <div class="modal-overlay" id="session-modal">
+    <div class="modal-card glass">
+      <div class="modal-header">
+        <h3><i data-lucide="plus-circle"></i> Log Stream Session for <span id="session-perf-name">Performer</span></h3>
+        <button class="btn-close" id="btn-close-session-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="session-form" class="standard-form">
+          <input type="hidden" id="session-perf-id">
+          <div class="form-group">
+            <label for="sess-date">Session Date</label>
+            <input type="date" id="sess-date" required class="form-control">
+          </div>
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="sess-duration">Duration (Hours)</label>
+              <input type="number" step="0.1" id="sess-duration" required placeholder="e.g. 4.5" class="form-control">
+            </div>
+            <div class="form-group col">
+              <label for="sess-tips">Total Tokens Earned</label>
+              <input type="number" id="sess-tips" required placeholder="e.g. 2100" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="sess-notes">Stream Notes (What worked? What games were active?)</label>
+            <textarea id="sess-notes" placeholder="e.g. Played Dice Game. Tipping spikes occurred when goals reached 80%." class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-session">Cancel</button>
+            <button type="submit" class="btn btn-primary">Log Session</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Playback Modal -->
+  <div class="modal-overlay" id="video-modal">
+    <div class="modal-card glass video-modal-card">
+      <div class="modal-header">
+        <h3 id="video-modal-title">Stream Playback</h3>
+        <button class="btn-close" id="btn-close-video-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body video-container">
+        <video id="archive-video-player" controls autoplay>
+          <source src="" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript logic -->
+  <script src="app.js"></script>
+</body>
+</html>
