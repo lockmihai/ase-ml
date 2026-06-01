@@ -109,6 +109,22 @@
       "finalSize": "0 B",
       "duration": "00:00",
       "exitCode": 1
+    },
+    {
+      "username": "crystal_star",
+      "startTime": "2026-06-01T23:45:37.491Z",
+      "endTime": "2026-06-01T23:45:38.764Z",
+      "finalSize": "0 B",
+      "duration": "00:00",
+      "exitCode": 1
+    },
+    {
+      "username": "angelsofaurora",
+      "startTime": "2026-06-01T23:46:12.696Z",
+      "endTime": "2026-06-01T23:47:31.775Z",
+      "finalSize": "0 B",
+      "duration": "00:00",
+      "exitCode": 0
     }
   ]
 }

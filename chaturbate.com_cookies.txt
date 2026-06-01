@@ -1,0 +1,13 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+chaturbate.com	FALSE	/	TRUE	1782949347	dwf_ff-VDPEnblWhip	False
+.chaturbate.com	TRUE	/	TRUE	1782949271	affkey	"eJyrVipSslJQUtJRUEoBMYwMjMx0DYDIUMHI2MrE0MrQECSXVgKSrFZPTEtTt1JQV9dRUE/OTIExS4qyYcwCGKO4KBmuMhcuCtaCxQ6wDiQDYYwiMKNWqRYAwcQjrQ=="
+.chaturbate.com	TRUE	/	TRUE	1795909271	sbr	sec:sbra9aaee6c-66e4-439c-8a67-bd9fe41cb3ce:1wUCFr:qv3dy5vqorPhb8tsHNW0eM443o3LqHmy5xRz-51TDy8
+.chaturbate.com	TRUE	/	FALSE	1795909274	agreeterms	1
+.chaturbate.com	TRUE	/	TRUE	1780359074	__cf_bm	5dW0696wc_Y1aT9E.NCPHi1qjV5OgONjIZnkLPrpQIQ-1780357274.0685725-1.0.1.1-90fFjqmmpFEInbyZeZd5k4svKZYKwp_wEVzka6bVjWccm9yVyx84WV8VCGXo_ULrVs29ZcYKHQFsgYpzYAsQieH0DDewppcunYAxWZk.eLgDYtjLlWMYdV8WFxy909v2
+.chaturbate.com	TRUE	/	TRUE	1795909275	__utfpp	f:trnx22e3dba16fc6ea7ecc012553f0d4ddbb:1wUCFu:s6eY6zCqmIxNt_pdF3ygmaVA3Kk5EHbo5qYLIqnNN6k
+.chaturbate.com	TRUE	/	TRUE	1795909347	csrftoken	rxAS2O2imhV9D3LwPalch3M0d4NC4HRL
+.chaturbate.com	TRUE	/	TRUE	1785541346	sessionid	v1w1mdd8va12w5nwhtnx2i8pv32l3ysj
+.chaturbate.com	TRUE	/	TRUE	1795909274	cf_clearance	HH591OdTHMNVljI67imfor7zQTZ_t8aWwcQQv62qg1Q-1780357274-1.2.1.1-e23RiDm5SdvX9euMlUP3dO46AWvXdcXETHpw.OD7KosCZStel9NifKHbBrWD_xRSa7CSJyKELq2ikrppouHBRZ8wbGkuyvprhITSc8vje5cIi6tki_Jc2FIFIOxPm5oXAY28Pb1JMpPmrTEWxuWhqShQK0pj8dRIOvIgr4cXgcmEaMSB1t8cqHiOtu9.iEaWrk4y14jlPwxGXDmx5AUMGLHXjScD9PcUnSnHk0FAumm6DDTO68vCSMXjom9IGtWTTFg2CuhNddwfAGIG4ItK_MNDdUZaMWXMry8o86coeXG6x3EbWds2eME5z7KO3OLKfn2ea_bLGzfAkw4dGvpWsQ

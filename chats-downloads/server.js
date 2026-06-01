@@ -172,8 +172,11 @@ app.post('/api/record/start', (req, res) => {
     '--hls-use-mpegts' // Use MPEG-TS for livestream fragments (resilient to interruptions)
   ];
 
-  // Check if .env credentials should be used
-  if (process.env.username && process.env.password) {
+  // Check if cookies.txt exists in the project folder to bypass Cloudflare login checks
+  const cookiesPath = path.join(__dirname, 'cookies.txt');
+  if (fs.existsSync(cookiesPath)) {
+    args.push('--cookies', cookiesPath);
+  } else if (process.env.username && process.env.password) {
     // Read credentials
     args.push('--username', process.env.username);
     args.push('--password', process.env.password);
