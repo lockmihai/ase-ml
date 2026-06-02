@@ -10,6 +10,37 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Basic Authentication Middleware
+const basicAuth = (req, res, next) => {
+  const authUser = process.env.BASIC_AUTH_USER || 'admin';
+  const authPass = process.env.BASIC_AUTH_PASS;
+
+  // If no password is set, skip authentication (allows default passwordless local dev)
+  if (!authPass) {
+    return next();
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Secure Stream Recorder"');
+    return res.status(401).send('Authentication required.');
+  }
+
+  const auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+  const user = auth[0];
+  const pass = auth[1];
+
+  if (user === authUser && pass === authPass) {
+    return next();
+  }
+
+  res.setHeader('WWW-Authenticate', 'Basic realm="Secure Stream Recorder"');
+  return res.status(401).send('Invalid credentials.');
+};
+
+app.use(basicAuth);
+
 app.use(express.static(path.join(__dirname, 'public')));
 // Serve the downloads directory so the files can be played back in the browser
 app.use('/video-downloads', express.static(path.join(__dirname, 'downloads')));
