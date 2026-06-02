@@ -29,16 +29,7 @@ sudo chmod a+rx /usr/local/bin/yt-dlp
 echo "Installing PM2..."
 sudo npm install -g pm2
 
-# 6. Prepare App Directory
-APP_DIR="/opt/chats-downloads"
-echo "Setting up application directory at $APP_DIR..."
-
-if [ ! -d "$APP_DIR" ]; then
-  sudo mkdir -p $APP_DIR
-  sudo chown $USER:$USER $APP_DIR
-fi
-
-# We assume the user has copied their files to the VM or cloned the repo.
+# 6. We assume the user has copied their files to the VM or cloned the repo.
 # For this script, we'll ensure dependencies in the current directory are installed.
 echo "Installing Node.js app dependencies in current directory..."
 npm install
