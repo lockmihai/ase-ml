@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const { spawn, execSync } = require('child_process');
+const basicAuth = require('express-basic-auth');
 require('dotenv').config();
 
 const app = express();
@@ -10,6 +11,17 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Set up basic authentication for all routes
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
+
+app.use(basicAuth({
+    users: { [ADMIN_USERNAME]: ADMIN_PASSWORD },
+    challenge: true,
+    realm: 'Antigravity Optimizer'
+}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 // Serve the downloads directory so the files can be played back in the browser
 app.use('/video-downloads', express.static(path.join(__dirname, 'downloads')));
