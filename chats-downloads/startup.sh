@@ -19,7 +19,7 @@ echo "Installing Node.js..."
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# 4. Install yt-dlp using pip to ensure latest version
+# 4. Install yt-dlp by downloading the latest release binary
 echo "Installing yt-dlp..."
 sudo apt-get remove -y yt-dlp || true # Remove apt version if exists
 sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
