@@ -66,8 +66,41 @@ Add the following lines (replace with your desired secure credentials):
 PORT=3000
 ADMIN_USERNAME=your_secure_username
 ADMIN_PASSWORD=your_secure_password
+
+# Optional: Configure AI Suggestions
+# GEMINI_API_KEY=your_gemini_api_key
+# OLLAMA_URL=http://your_tailscale_ip:11434
+# OLLAMA_MODEL=llama3
 ```
 Save (`Ctrl+O`, `Enter`) and exit (`Ctrl+X`).
+
+## 5. Exposing Local Ollama (Tailscale)
+
+If you have a local Ollama server running on a Mac mini and want your GCE VM to use it via Tailscale:
+
+1. **On your Mac Mini (Ollama Server):**
+   By default, Ollama only listens on `localhost` (127.0.0.1). You need to configure it to listen on your Tailscale interface.
+
+   Open your terminal on the Mac mini and edit the Ollama launchd plist or set the environment variable:
+   ```bash
+   launchctl setenv OLLAMA_HOST "0.0.0.0"
+   ```
+   *Note: `0.0.0.0` tells Ollama to listen on all network interfaces, including Tailscale. Since you are using Tailscale, this traffic remains secure within your private network.*
+
+   Restart the Ollama app on your Mac mini for the changes to take effect.
+
+2. **On your GCE VM:**
+   Install Tailscale on the VM and authenticate it to your Tailnet:
+   ```bash
+   curl -fsSL https://tailscale.com/install.sh | sh
+   sudo tailscale up
+   ```
+
+3. **Configure the App:**
+   Find the Tailscale IP of your Mac mini (e.g., `100.x.y.z`). Update the `.env` file on your GCE VM:
+   ```
+   OLLAMA_URL=http://<MAC_MINI_TAILSCALE_IP>:11434
+   ```
 
 Then restart the app so it picks up the new credentials:
 ```bash
