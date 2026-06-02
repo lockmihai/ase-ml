@@ -13,15 +13,11 @@ app.use(cors());
 app.use(express.json());
 
 // Set up basic authentication for all routes
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'lockmihai';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'my_secure_password123';
 
 app.use(basicAuth({
-    authorizer: (username, password) => {
-        const userMatches = basicAuth.safeCompare(username, ADMIN_USERNAME);
-        const passwordMatches = basicAuth.safeCompare(password, ADMIN_PASSWORD);
-        return userMatches & passwordMatches;
-    },
+    users: { [ADMIN_USERNAME]: ADMIN_PASSWORD },
     challenge: true,
     realm: 'Antigravity Optimizer'
 }));

@@ -19,7 +19,7 @@ echo "Installing Node.js..."
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# 4. Install yt-dlp by downloading the latest release binary
+# 4. Install yt-dlp using pip to ensure latest version
 echo "Installing yt-dlp..."
 sudo apt-get remove -y yt-dlp || true # Remove apt version if exists
 sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
@@ -29,7 +29,16 @@ sudo chmod a+rx /usr/local/bin/yt-dlp
 echo "Installing PM2..."
 sudo npm install -g pm2
 
-# 6. We assume the user has copied their files to the VM or cloned the repo.
+# 6. Prepare App Directory
+APP_DIR="/opt/chats-downloads"
+echo "Setting up application directory at $APP_DIR..."
+
+if [ ! -d "$APP_DIR" ]; then
+  sudo mkdir -p $APP_DIR
+  sudo chown $USER:$USER $APP_DIR
+fi
+
+# We assume the user has copied their files to the VM or cloned the repo.
 # For this script, we'll ensure dependencies in the current directory are installed.
 echo "Installing Node.js app dependencies in current directory..."
 npm install
@@ -51,7 +60,5 @@ echo ""
 echo "To access it over the internet, make sure to:"
 echo "1. Create a firewall rule in Google Cloud to allow TCP port 3000."
 echo "2. Visit http://<YOUR_VM_EXTERNAL_IP>:3000 in your browser."
-echo "3. IMPORTANT: The default login is admin / admin. Before exposing this VM,"
-echo "   create a .env file in this directory with ADMIN_USERNAME and ADMIN_PASSWORD,"
-echo "   then run: pm2 restart chats-downloads"
+echo "3. Default login is admin / admin (change this by creating a .env file)."
 echo "========================================================="
