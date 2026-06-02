@@ -17,7 +17,11 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
 
 app.use(basicAuth({
-    users: { [ADMIN_USERNAME]: ADMIN_PASSWORD },
+    authorizer: (username, password) => {
+        const userMatches = basicAuth.safeCompare(username, ADMIN_USERNAME);
+        const passwordMatches = basicAuth.safeCompare(password, ADMIN_PASSWORD);
+        return userMatches & passwordMatches;
+    },
     challenge: true,
     realm: 'Antigravity Optimizer'
 }));
