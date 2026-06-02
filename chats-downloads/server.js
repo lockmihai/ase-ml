@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn, execSync } = require('child_process');
 const basicAuth = require('express-basic-auth');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
 const app = express();
@@ -546,27 +547,111 @@ app.delete('/api/games/:id', (req, res) => {
 });
 
 // ==========================================
-// SUGGESTIONS ENGINE (LOCAL RULE ENGINE)
+// SUGGESTIONS ENGINE (AI INTEGRATION)
 // ==========================================
 
-app.post('/api/suggestions', (req, res) => {
-  const { category, style, schedule, experience } = req.body;
+app.post('/api/suggestions', async (req, res) => {
+  const { category, style, schedule, experience, target } = req.body;
 
   if (!category || !style) {
     return res.status(400).json({ error: "Category and Style fields are required." });
   }
 
-  // A powerful and sophisticated rules engine that generates dynamic, beautiful suggestions
-  const suggestions = {
-    generalTips: [
-      "**Interactive Menu**: Keep a clean, updated interactive tip menu visible in your bio and stream overlay. Use specific, easily actionable items rather than generic goals.",
-      "**Stream Schedule consistency**: Having a set calendar increases return rates by over 40%. Alert users in your bio of your exact schedule.",
-      "**Goal setting**: Split large goals (e.g. 2000 tokens for outfit change) into smaller milestone tiers (e.g. 500 tokens = shoe change, 1000 tokens = wig change, etc.) to keep users motivated."
-    ],
+  // Use Gemini if API key is provided, or Ollama if configured, otherwise fallback to local rules
+  const geminiApiKey = process.env.GEMINI_API_KEY;
+  const ollamaUrl = process.env.OLLAMA_URL;
+
+  let suggestions = {
+    generalTips: [],
     nicheSuggestions: [],
     marketingStrategy: [],
     gameRecommendations: []
   };
+
+  const promptText = `
+  You are an expert livestreaming marketing consultant. Provide suggestions for a streamer with the following profile:
+  Category: ${category}
+  Style: ${style}
+  Experience: ${experience || 'intermediate'}
+  Target Goal: ${target || 'general stream growth'}
+
+  Provide your response as a JSON object with exactly these four keys, where each key contains an array of 2-3 specific, actionable suggestions formatted in Markdown (e.g. "**Bold Title**: description"):
+  - "generalTips" (general optimizations and rules)
+  - "nicheSuggestions" (strategic stream focus based on their category)
+  - "marketingStrategy" (out-of-stream marketing and funneling)
+  - "gameRecommendations" (high-converting tip games or interactive ideas)
+
+  Only output valid JSON. Do not include markdown formatting like \`\`\`json.
+  `;
+
+  try {
+    let aiResponseText = null;
+
+    if (geminiApiKey) {
+      console.log("Generating suggestions using Google Gemini...");
+      const genAI = new GoogleGenerativeAI(geminiApiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const result = await model.generateContent(promptText);
+      const response = await result.response;
+      aiResponseText = response.text();
+    } else if (ollamaUrl) {
+      console.log(`Generating suggestions using Ollama at ${ollamaUrl}...`);
+      const response = await fetch(`${ollamaUrl}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: process.env.OLLAMA_MODEL || "llama3",
+          prompt: promptText,
+          stream: false,
+          format: "json"
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        aiResponseText = data.response;
+      } else {
+        throw new Error(`Ollama API returned ${response.status}`);
+      }
+    }
+
+    if (aiResponseText) {
+      // Clean up potential markdown formatting from AI output
+      let cleanJsonText = aiResponseText.trim();
+      if (cleanJsonText.startsWith("```json")) {
+        cleanJsonText = cleanJsonText.substring(7);
+      }
+      if (cleanJsonText.startsWith("```")) {
+        cleanJsonText = cleanJsonText.substring(3);
+      }
+      if (cleanJsonText.endsWith("```")) {
+        cleanJsonText = cleanJsonText.substring(0, cleanJsonText.length - 3);
+      }
+
+      const parsedAiSuggestions = JSON.parse(cleanJsonText);
+
+      // Ensure all arrays exist
+      suggestions = {
+        generalTips: Array.isArray(parsedAiSuggestions.generalTips) ? parsedAiSuggestions.generalTips : [],
+        nicheSuggestions: Array.isArray(parsedAiSuggestions.nicheSuggestions) ? parsedAiSuggestions.nicheSuggestions : [],
+        marketingStrategy: Array.isArray(parsedAiSuggestions.marketingStrategy) ? parsedAiSuggestions.marketingStrategy : [],
+        gameRecommendations: Array.isArray(parsedAiSuggestions.gameRecommendations) ? parsedAiSuggestions.gameRecommendations : [],
+      };
+
+      return res.json({ category, style, source: geminiApiKey ? 'gemini' : 'ollama', suggestions });
+    }
+  } catch (error) {
+    console.error("AI Generation Error:", error);
+    // If AI fails, we fall back to the rule engine
+  }
+
+  console.log("Using local rule engine fallback for suggestions.");
+  // --- LOCAL FALLBACK RULE ENGINE ---
+
+  suggestions.generalTips = [
+    "**Interactive Menu**: Keep a clean, updated interactive tip menu visible in your bio and stream overlay. Use specific, easily actionable items rather than generic goals.",
+    "**Stream Schedule consistency**: Having a set calendar increases return rates by over 40%. Alert users in your bio of your exact schedule.",
+    "**Goal setting**: Split large goals (e.g. 2000 tokens for outfit change) into smaller milestone tiers (e.g. 500 tokens = shoe change, 1000 tokens = wig change, etc.) to keep users motivated."
+  ];
 
   // Add specific category strategies
   if (category.toLowerCase() === 'female') {
@@ -651,6 +736,7 @@ app.post('/api/suggestions', (req, res) => {
   res.json({
     category,
     style,
+    source: 'local_rules',
     suggestions: suggestions
   });
 });
